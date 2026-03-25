@@ -294,4 +294,8 @@ function sendJson(res, statusCode, payload) {
 function sendText(res, statusCode, message) {
   res.writeHead(statusCode, { "Content-Type": "text/plain; charset=utf-8" });
   res.end(message);
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e616fd2163a2abe806a85cf9116eb136c56905ca

@@ -3,14 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "description": "Daily checklist app with hourly checks, history, and fault reporting.",
-  "main": "server.js",
+  "main": "netlify/functions/api.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "netlify dev",
+    "build": "node -e \"console.log('Static site ready for Netlify')\""
   },
   "engines": {
     "node": "22.x"
   },
   "dependencies": {
-    "better-sqlite3": "^12.8.0"
+    "@neondatabase/serverless": "^1.0.1"
   }
 }
