@@ -67,6 +67,10 @@ async function initialize() {
 async function loadState() {
   try {
     const response = await fetch("/api/checklist/current");
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
     const stored = await response.json();
     if (!stored) {
       return structuredClone(template);
@@ -167,11 +171,15 @@ function queueSave(message) {
 
 async function persist(message) {
   try {
-    await fetch("/api/checklist/current", {
+    const response = await fetch("/api/checklist/current", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(state),
     });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
     saveStatus.textContent = message;
   } catch {
     saveStatus.textContent = "Could not save checklist. Check the server connection.";
@@ -196,11 +204,15 @@ async function saveToHistory() {
   };
 
   try {
-    await fetch("/api/history", {
+    const response = await fetch("/api/history", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(snapshot),
     });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
     saveStatus.textContent = "Daily hourly checklist saved to shared historical records.";
   } catch {
     saveStatus.textContent = "Could not save to history. Check the server connection.";

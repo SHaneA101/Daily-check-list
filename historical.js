@@ -119,10 +119,14 @@ async function renderHistory() {
 
 async function clearHistory() {
   try {
-    await Promise.all([
+    const responses = await Promise.all([
       fetch(HISTORY_ENDPOINT, { method: "DELETE" }),
       fetch(REPORTS_ENDPOINT, { method: "DELETE" }),
     ]);
+    if (responses.some((response) => !response.ok)) {
+      throw new Error("Failed to clear records");
+    }
+
     await initialize();
   } catch {
     historyList.innerHTML = `
@@ -137,7 +141,12 @@ async function clearHistory() {
 async function readHistory() {
   try {
     const response = await fetch(HISTORY_ENDPOINT);
-    return await response.json();
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    return Array.isArray(payload) ? payload : [];
   } catch {
     return [];
   }
@@ -146,7 +155,12 @@ async function readHistory() {
 async function readReports() {
   try {
     const response = await fetch(REPORTS_ENDPOINT);
-    return await response.json();
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
+    const payload = await response.json();
+    return Array.isArray(payload) ? payload : [];
   } catch {
     return [];
   }
