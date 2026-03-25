@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: daily-checklist-app
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 22.17.0
+      - key: DATABASE_PATH
+        value: /var/data/daily-checklist.sqlite
+    disk:
+      name: daily-checklist-data
+      mountPath: /var/data
+      sizeGB: 1

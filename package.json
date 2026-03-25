@@ -1,0 +1,16 @@
+{
+  "name": "daily-checklist-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Daily checklist app with hourly checks, history, and fault reporting.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "22.x"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.8.0"
+  }
+}

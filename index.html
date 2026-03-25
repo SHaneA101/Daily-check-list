@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Checklist &mdash; Login</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="login-container">
+    <section class="login-panel">
+      <div class="login-header">
+        <h1>Welcome back <span class="wave">&#128075;</span></h1>
+        <p>Log in to access your daily checklist.</p>
+      </div>
+
+      <form class="login-form" action="dashboard.html" autocomplete="off">
+        <label>
+          <span class="label-text">Email</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128231;</span>
+            <input type="email" placeholder="user@email.com" required />
+          </div>
+        </label>
+
+        <label>
+          <span class="label-text">Password</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128274;</span>
+            <input type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+          </div>
+        </label>
+
+        <div class="form-aux">
+          <a class="link-secondary" href="forgot-password.html">Forgot Password</a>
+        </div>
+
+        <button type="submit" class="primary-btn">
+          Log In <span class="chevron">&rsaquo;</span>
+        </button>
+
+        <p class="signup-note">
+          Don&rsquo;t have an account? <a class="link-primary" href="signup.html">Sign Up</a>
+        </p>
+      </form>
+    </section>
+
+    <section class="image-panel" aria-hidden="true">
+      <div class="image-illustration"></div>
+    </section>
+  </main>
+</body>
+</html>

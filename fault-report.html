@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Checklist &mdash; Fault Report</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">Fault Reporting</p>
+        <h1 class="dashboard-title">Upload Faults And Equipment Damage</h1>
+        <p class="dashboard-subtitle">
+          Use your phone camera or gallery to attach a photo, describe the issue, and save it to the historical record.
+        </p>
+      </div>
+
+      <div class="dashboard-actions">
+        <a class="secondary-btn" href="dashboard.html">Back to Dashboard</a>
+        <a class="secondary-btn" href="historical.html">View Historical</a>
+      </div>
+    </header>
+
+    <main class="dashboard-card dashboard-main">
+      <form id="fault-form" class="report-form">
+        <div class="report-grid">
+          <label class="meta-field">
+            <span class="meta-label">Department</span>
+            <input type="text" name="department" value="Washline" required />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Report Date</span>
+            <input type="date" name="reportDate" value="2026-03-20" required />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Report Date</span>
+            <input type="time" name="reportTime" value="08:00" required />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Equipment / Area</span>
+            <input type="text" name="equipment" placeholder="Example: Wax pump" required />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Severity</span>
+            <select name="severity" class="table-select" required>
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="meta-field">
+          <span class="meta-label">Description</span>
+          <textarea name="description" class="note-input report-textarea" rows="4" placeholder="Describe the fault or damage..." required></textarea>
+        </label>
+
+        <label class="meta-field">
+          <span class="meta-label">Photo</span>
+          <input type="file" id="photo-input" name="photo" accept="image/*" capture="environment" class="upload-input" required />
+        </label>
+
+        <div class="photo-preview-wrap">
+          <img id="photo-preview" class="photo-preview is-hidden" alt="Fault preview" />
+        </div>
+
+        <div class="dashboard-actions">
+          <button type="submit" class="primary-btn">Save Report</button>
+          <button type="button" id="reset-report-btn" class="secondary-btn">Clear Form</button>
+        </div>
+
+        <div class="sidebar-message" id="report-status">Reports saved here will appear on the historical page.</div>
+      </form>
+    </main>
+  </div>
+
+  <script src="fault-report.js"></script>
+</body>
+</html>
