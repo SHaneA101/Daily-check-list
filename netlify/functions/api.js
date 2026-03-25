@@ -14,7 +14,7 @@ exports.handler = async (event) => {
   try {
     await ensureSchema();
 
-    const path = event.path.replace(/^\/\.netlify\/functions\/api/, "") || "/";
+    const path = normalizePath(event);
     const method = event.httpMethod;
     const userKey = readUserKey(event);
 
@@ -70,6 +70,16 @@ exports.handler = async (event) => {
     return json(500, { error: "Server error", detail: error.message });
   }
 };
+
+function normalizePath(event) {
+  const rawPath = String(event.path || event.rawPath || "/");
+  const normalizedPath = rawPath
+    .replace(/^\/\.netlify\/functions\/api(\/|$)/, "/")
+    .replace(/^\/api(\/|$)/, "/")
+    .replace(/\/{2,}/g, "/");
+
+  return normalizedPath === "" ? "/" : normalizedPath;
+}
 
 function readJsonBody(event) {
   if (!event.body) {
