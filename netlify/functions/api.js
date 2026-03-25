@@ -16,6 +16,7 @@ exports.handler = async (event) => {
 
     const path = event.path.replace(/^\/\.netlify\/functions\/api/, "") || "/";
     const method = event.httpMethod;
+    const userKey = readUserKey(event);
 
     if (path === "/health" && method === "GET") {
       return json(200, { ok: true });
@@ -23,43 +24,43 @@ exports.handler = async (event) => {
 
     if (path === "/checklist/current") {
       if (method === "GET") {
-        return json(200, await getCurrentChecklist());
+        return json(200, await getCurrentChecklist(userKey));
       }
 
       if (method === "PUT") {
-        await setCurrentChecklist(readJsonBody(event));
+        await setCurrentChecklist(userKey, readJsonBody(event));
         return json(200, { ok: true });
       }
     }
 
     if (path === "/history") {
       if (method === "GET") {
-        return json(200, await getHistory());
+        return json(200, await getHistory(userKey));
       }
 
       if (method === "POST") {
-        await addHistoryEntry(readJsonBody(event));
+        await addHistoryEntry(userKey, readJsonBody(event));
         return json(201, { ok: true });
       }
 
       if (method === "DELETE") {
-        await clearHistory();
+        await clearHistory(userKey);
         return json(200, { ok: true });
       }
     }
 
     if (path === "/reports") {
       if (method === "GET") {
-        return json(200, await getReports());
+        return json(200, await getReports(userKey));
       }
 
       if (method === "POST") {
-        await addReport(readJsonBody(event));
+        await addReport(userKey, readJsonBody(event));
         return json(201, { ok: true });
       }
 
       if (method === "DELETE") {
-        await clearReports();
+        await clearReports(userKey);
         return json(200, { ok: true });
       }
     }
@@ -76,6 +77,12 @@ function readJsonBody(event) {
   }
 
   return JSON.parse(event.body);
+}
+
+function readUserKey(event) {
+  const headerValue = event.headers?.["x-user-key"] || event.headers?.["X-User-Key"] || "";
+  const normalized = String(headerValue).trim().toLowerCase();
+  return normalized || "shared";
 }
 
 function json(statusCode, payload) {

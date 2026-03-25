@@ -17,12 +17,12 @@
         <p>Log in to access your daily checklist.</p>
       </div>
 
-      <form class="login-form" action="dashboard.html" autocomplete="off">
+      <form class="login-form" id="login-form" autocomplete="off">
         <label>
           <span class="label-text">Email</span>
           <div class="input-wrapper">
             <span class="icon">&#128231;</span>
-            <input type="email" placeholder="user@email.com" required />
+            <input type="email" name="email" placeholder="user@email.com" required />
           </div>
         </label>
 
@@ -30,7 +30,7 @@
           <span class="label-text">Password</span>
           <div class="input-wrapper">
             <span class="icon">&#128274;</span>
-            <input type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+            <input type="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
           </div>
         </label>
 
@@ -45,6 +45,7 @@
         <p class="signup-note">
           Don&rsquo;t have an account? <a class="link-primary" href="signup.html">Sign Up</a>
         </p>
+        <p class="signup-note" id="login-status" aria-live="polite"></p>
       </form>
     </section>
 
@@ -52,9 +53,7 @@
       <div class="image-illustration"></div>
     </section>
   </main>
+  <script src="session.js"></script>
+  <script src="login.js"></script>
 </body>
-<<<<<<< HEAD
 </html>
-=======
-</html>
->>>>>>> e616fd2163a2abe806a85cf9116eb136c56905ca
