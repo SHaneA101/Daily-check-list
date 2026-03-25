@@ -4,9 +4,11 @@ const HOURS = ["06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00", "1
 const historyList = document.getElementById("history-list");
 const reportList = document.getElementById("report-list");
 const clearHistoryButton = document.getElementById("clear-history-btn");
-
-initialize();
-clearHistoryButton.addEventListener("click", clearHistory);
+const session = window.DailyChecklistSession.requireSession();
+if (session) {
+  initialize();
+  clearHistoryButton.addEventListener("click", clearHistory);
+}
 
 async function initialize() {
   await Promise.all([renderReports(), renderHistory()]);
@@ -120,8 +122,8 @@ async function renderHistory() {
 async function clearHistory() {
   try {
     await Promise.all([
-      fetch(HISTORY_ENDPOINT, { method: "DELETE" }),
-      fetch(REPORTS_ENDPOINT, { method: "DELETE" }),
+      fetch(HISTORY_ENDPOINT, { method: "DELETE", headers: window.DailyChecklistSession.authHeaders() }),
+      fetch(REPORTS_ENDPOINT, { method: "DELETE", headers: window.DailyChecklistSession.authHeaders() }),
     ]);
     await initialize();
   } catch {
@@ -136,7 +138,12 @@ async function clearHistory() {
 
 async function readHistory() {
   try {
-    const response = await fetch(HISTORY_ENDPOINT);
+    const response = await fetch(HISTORY_ENDPOINT, {
+      headers: window.DailyChecklistSession.authHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status})`);
+    }
     return await response.json();
   } catch {
     return [];
@@ -145,7 +152,12 @@ async function readHistory() {
 
 async function readReports() {
   try {
-    const response = await fetch(REPORTS_ENDPOINT);
+    const response = await fetch(REPORTS_ENDPOINT, {
+      headers: window.DailyChecklistSession.authHeaders(),
+    });
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status})`);
+    }
     return await response.json();
   } catch {
     return [];

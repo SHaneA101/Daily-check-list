@@ -5,12 +5,14 @@ const photoInput = document.getElementById("photo-input");
 const photoPreview = document.getElementById("photo-preview");
 const reportStatus = document.getElementById("report-status");
 const resetReportButton = document.getElementById("reset-report-btn");
+const session = window.DailyChecklistSession.requireSession();
 
 let photoDataUrl = "";
-
-photoInput.addEventListener("change", handlePhotoChange);
-faultForm.addEventListener("submit", handleSubmit);
-resetReportButton.addEventListener("click", resetForm);
+if (session) {
+  photoInput.addEventListener("change", handlePhotoChange);
+  faultForm.addEventListener("submit", handleSubmit);
+  resetReportButton.addEventListener("click", resetForm);
+}
 
 function handlePhotoChange(event) {
   const file = event.target.files?.[0];
@@ -51,11 +53,14 @@ async function handleSubmit(event) {
   };
 
   try {
-    await fetch(REPORTS_KEY_ENDPOINT, {
+    const response = await fetch(REPORTS_KEY_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: window.DailyChecklistSession.authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify(report),
     });
+    if (!response.ok) {
+      throw new Error(`Request failed (${response.status})`);
+    }
     reportStatus.textContent = "Fault report saved to shared historical records.";
     resetForm(false);
   } catch {

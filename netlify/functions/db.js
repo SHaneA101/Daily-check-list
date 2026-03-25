@@ -24,6 +24,7 @@ async function ensureSchema() {
       await sql`
         CREATE TABLE IF NOT EXISTS checklist_history (
           id TEXT PRIMARY KEY,
+          owner_key TEXT NOT NULL DEFAULT 'shared',
           saved_at TIMESTAMPTZ NOT NULL,
           payload JSONB NOT NULL
         );
@@ -32,9 +33,20 @@ async function ensureSchema() {
       await sql`
         CREATE TABLE IF NOT EXISTS fault_reports (
           id TEXT PRIMARY KEY,
+          owner_key TEXT NOT NULL DEFAULT 'shared',
           saved_at TIMESTAMPTZ NOT NULL,
           payload JSONB NOT NULL
         );
+      `;
+
+      await sql`
+        ALTER TABLE checklist_history
+        ADD COLUMN IF NOT EXISTS owner_key TEXT NOT NULL DEFAULT 'shared'
+      `;
+
+      await sql`
+        ALTER TABLE fault_reports
+        ADD COLUMN IF NOT EXISTS owner_key TEXT NOT NULL DEFAULT 'shared'
       `;
 
       await migrateLegacyJson();
@@ -60,17 +72,17 @@ async function migrateLegacyJson() {
 
   const currentChecklist = readLegacyJson("current-checklist.json", null);
   if (currentChecklist) {
-    await setCurrentChecklist(currentChecklist);
+    await setCurrentChecklist("shared", currentChecklist);
   }
 
   const history = readLegacyJson("history.json", []);
   for (const entry of history) {
-    await addHistoryEntry(entry);
+    await addHistoryEntry("shared", entry);
   }
 
   const reports = readLegacyJson("reports.json", []);
   for (const report of reports) {
-    await addReport(report);
+    await addReport("shared", report);
   }
 
   await sql`
@@ -89,83 +101,103 @@ function readLegacyJson(fileName, fallback) {
   }
 }
 
-async function getCurrentChecklist() {
+function normalizeScope(scope) {
+  return String(scope || "").trim().toLowerCase() || "shared";
+}
+
+function scopedStateKey(scope, key) {
+  return `${normalizeScope(scope)}:${key}`;
+}
+
+async function getCurrentChecklist(scope) {
   await ensureSchema();
+  const scopedKey = scopedStateKey(scope, "current-checklist");
   const rows = await sql`
     SELECT value
     FROM app_state
-    WHERE key = 'current-checklist'
+    WHERE key = ${scopedKey}
   `;
   return rows[0]?.value ?? null;
 }
 
-async function setCurrentChecklist(value) {
+async function setCurrentChecklist(scope, value) {
   await ensureSchema();
+  const scopedKey = scopedStateKey(scope, "current-checklist");
   await sql`
     INSERT INTO app_state (key, value)
-    VALUES ('current-checklist', ${JSON.stringify(value)}::jsonb)
+    VALUES (${scopedKey}, ${JSON.stringify(value)}::jsonb)
     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value
   `;
 }
 
-async function getHistory() {
+async function getHistory(scope) {
   await ensureSchema();
+  const ownerKey = normalizeScope(scope);
   const rows = await sql`
     SELECT payload
     FROM checklist_history
+    WHERE owner_key = ${ownerKey}
     ORDER BY saved_at DESC, id DESC
   `;
   return rows.map((row) => row.payload);
 }
 
-async function addHistoryEntry(entry) {
+async function addHistoryEntry(scope, entry) {
   await ensureSchema();
+  const ownerKey = normalizeScope(scope);
   const id = entry?.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const savedAt = entry?.savedAt || new Date().toISOString();
   const payload = { ...entry, id, savedAt };
 
   await sql`
-    INSERT INTO checklist_history (id, saved_at, payload)
-    VALUES (${id}, ${savedAt}, ${JSON.stringify(payload)}::jsonb)
+    INSERT INTO checklist_history (id, owner_key, saved_at, payload)
+    VALUES (${id}, ${ownerKey}, ${savedAt}, ${JSON.stringify(payload)}::jsonb)
     ON CONFLICT (id) DO UPDATE
-    SET saved_at = EXCLUDED.saved_at,
+    SET owner_key = EXCLUDED.owner_key,
+        saved_at = EXCLUDED.saved_at,
         payload = EXCLUDED.payload
   `;
 }
 
-async function clearHistory() {
+async function clearHistory(scope) {
   await ensureSchema();
-  await sql`DELETE FROM checklist_history`;
+  const ownerKey = normalizeScope(scope);
+  await sql`DELETE FROM checklist_history WHERE owner_key = ${ownerKey}`;
 }
 
-async function getReports() {
+async function getReports(scope) {
   await ensureSchema();
+  const ownerKey = normalizeScope(scope);
   const rows = await sql`
     SELECT payload
     FROM fault_reports
+    WHERE owner_key = ${ownerKey}
     ORDER BY saved_at DESC, id DESC
   `;
   return rows.map((row) => row.payload);
 }
 
-async function addReport(report) {
+async function addReport(scope, report) {
   await ensureSchema();
+  const ownerKey = normalizeScope(scope);
   const id = report?.id || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const savedAt = report?.savedAt || new Date().toISOString();
   const payload = { ...report, id, savedAt };
 
   await sql`
-    INSERT INTO fault_reports (id, saved_at, payload)
-    VALUES (${id}, ${savedAt}, ${JSON.stringify(payload)}::jsonb)
+    INSERT INTO fault_reports (id, owner_key, saved_at, payload)
+    VALUES (${id}, ${ownerKey}, ${savedAt}, ${JSON.stringify(payload)}::jsonb)
     ON CONFLICT (id) DO UPDATE
-    SET saved_at = EXCLUDED.saved_at,
+    SET owner_key = EXCLUDED.owner_key,
+        saved_at = EXCLUDED.saved_at,
         payload = EXCLUDED.payload
   `;
 }
 
-async function clearReports() {
+async function clearReports(scope) {
   await ensureSchema();
-  await sql`DELETE FROM fault_reports`;
+  const ownerKey = normalizeScope(scope);
+  await sql`DELETE FROM fault_reports WHERE owner_key = ${ownerKey}`;
 }
 
 module.exports = {
