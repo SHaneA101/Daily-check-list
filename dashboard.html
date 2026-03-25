@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Checklist &mdash; Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">Operations Dashboard</p>
+        <h1 class="dashboard-title">Daily Hourly Washline Checklist</h1>
+        <p class="dashboard-subtitle">
+          Edit the day sheet hour by hour, save changes automatically, and archive completed daily checklists into historical records.
+        </p>
+      </div>
+
+      <div class="dashboard-actions">
+        <a class="secondary-btn" href="fault-report.html">Report Fault / Damage</a>
+        <a class="secondary-btn" href="historical.html">View Historical</a>
+        <a class="secondary-btn" href="index.html">Back to Login</a>
+        <button class="primary-btn" type="button" id="save-history-btn">Save To History</button>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      <aside class="dashboard-card dashboard-sidebar">
+        <h2>Checklist Info</h2>
+
+        <form class="meta-form" id="meta-form">
+          <label class="meta-field">
+            <span class="meta-label">Department</span>
+            <input type="text" name="department" value="Washline" />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Check Date</span>
+            <input type="date" name="checkDate" value="2026-03-20" />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Shift</span>
+            <input type="text" name="shift" value="Day Shift" />
+          </label>
+          <label class="meta-field">
+            <span class="meta-label">Supervisor</span>
+            <input type="text" name="supervisor" value="Bakkies" />
+          </label>
+        </form>
+
+        <h2>Status Guide</h2>
+        <div class="status-list">
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            OK
+          </div>
+          <div class="status-pill">
+            <span class="status-dot warning"></span>
+            Attention
+          </div>
+          <div class="status-pill">
+            <span class="status-dot muted"></span>
+            Blank
+          </div>
+        </div>
+
+        <div class="sidebar-message" id="save-status">Changes save automatically on this device as the hourly checks are updated.</div>
+      </aside>
+
+      <main class="dashboard-card dashboard-main">
+        <div class="table-toolbar">
+          <h2>Editable Hourly Inspection Table</h2>
+          <p class="table-note">Update each hour as operators come back to check the line. Use "Save To History" when the day is complete.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table class="checklist-table">
+            <thead>
+              <tr>
+                <th class="item-col">Checklist Item</th>
+                <th class="day-cell">06:00</th>
+                <th class="day-cell">07:00</th>
+                <th class="day-cell">08:00</th>
+                <th class="day-cell">09:00</th>
+                <th class="day-cell">10:00</th>
+                <th class="day-cell">11:00</th>
+                <th class="day-cell">12:00</th>
+                <th class="day-cell">13:00</th>
+                <th class="day-cell">14:00</th>
+                <th class="day-cell">15:00</th>
+                <th class="day-cell">16:00</th>
+                <th class="day-cell">17:00</th>
+                <th>Operations / Notes</th>
+              </tr>
+            </thead>
+            <tbody id="checklist-body"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

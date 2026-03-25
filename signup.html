@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Checklist &mdash; Sign Up</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <main class="login-container">
+    <section class="login-panel">
+      <div class="login-header">
+        <p class="eyebrow">Create account</p>
+        <h1>Join Daily Checklist &#10024;</h1>
+        <p>Set up your account to manage daily tasks, inspections, and team updates in one place.</p>
+      </div>
+
+      <form class="login-form" autocomplete="off">
+        <label>
+          <span class="label-text">Full Name</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128100;</span>
+            <input type="text" placeholder="Jane Smith" required />
+          </div>
+        </label>
+
+        <label>
+          <span class="label-text">Work Email</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128231;</span>
+            <input type="email" placeholder="jane@company.com" required />
+          </div>
+        </label>
+
+        <label>
+          <span class="label-text">Password</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128274;</span>
+            <input type="password" placeholder="Create a strong password" required />
+          </div>
+        </label>
+
+        <label>
+          <span class="label-text">Confirm Password</span>
+          <div class="input-wrapper">
+            <span class="icon">&#128273;</span>
+            <input type="password" placeholder="Re-enter your password" required />
+          </div>
+        </label>
+
+        <label class="checkbox-row">
+          <input type="checkbox" required />
+          <span>I agree to the <a class="link-primary" href="#">Terms</a> and <a class="link-primary" href="#">Privacy Policy</a>.</span>
+        </label>
+
+        <button type="submit" class="primary-btn">
+          Create Account <span class="chevron">&rsaquo;</span>
+        </button>
+
+        <div class="form-aux form-aux-between">
+          <p class="signup-note">
+            Already have an account? <a class="link-primary" href="index.html">Log In</a>
+          </p>
+          <a class="secondary-btn" href="index.html">Back to Login</a>
+        </div>
+      </form>
+    </section>
+
+    <section class="image-panel" aria-hidden="true">
+      <div class="image-illustration"></div>
+    </section>
+  </main>
+</body>
+</html>

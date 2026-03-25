@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Checklist &mdash; Historical</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="dashboard-body">
+  <div class="dashboard-shell">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">Historical Records</p>
+        <h1 class="dashboard-title">Saved Daily Checklists</h1>
+        <p class="dashboard-subtitle">
+          Review hourly checklist snapshots saved from the dashboard. Each save captures the current daily sheet and notes.
+        </p>
+      </div>
+
+      <div class="dashboard-actions">
+        <a class="secondary-btn" href="dashboard.html">Back to Dashboard</a>
+        <button class="primary-btn" type="button" id="clear-history-btn">Clear History</button>
+      </div>
+    </header>
+
+    <main class="dashboard-card dashboard-main">
+      <section class="history-block">
+        <div class="table-toolbar">
+          <h2>Fault And Damage Reports</h2>
+          <p class="table-note">Reports uploaded from the dashboard or phone camera appear here.</p>
+        </div>
+        <div id="report-list" class="report-list"></div>
+      </section>
+
+      <section class="history-block">
+        <div class="table-toolbar">
+          <h2>Checklist History</h2>
+          <p class="table-note">Saved daily checklists are listed below.</p>
+        </div>
+      <div id="history-list" class="history-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="historical.js"></script>
+</body>
+</html>
