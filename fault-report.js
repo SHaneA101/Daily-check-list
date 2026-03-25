@@ -51,11 +51,15 @@ async function handleSubmit(event) {
   };
 
   try {
-    await fetch(REPORTS_KEY_ENDPOINT, {
+    const response = await fetch(REPORTS_KEY_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(report),
     });
+    if (!response.ok) {
+      throw new Error(`Request failed: ${response.status}`);
+    }
+
     reportStatus.textContent = "Fault report saved to shared historical records.";
     resetForm(false);
   } catch {

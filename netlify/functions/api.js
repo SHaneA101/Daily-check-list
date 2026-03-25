@@ -14,7 +14,7 @@ exports.handler = async (event) => {
   try {
     await ensureSchema();
 
-    const path = event.path.replace(/^\/\.netlify\/functions\/api/, "") || "/";
+    const path = normalizeApiPath(event.path || event.rawUrl || "/");
     const method = event.httpMethod;
 
     if (path === "/health" && method === "GET") {
@@ -76,6 +76,29 @@ function readJsonBody(event) {
   }
 
   return JSON.parse(event.body);
+}
+
+function normalizeApiPath(rawPath) {
+  const pathname = getPathname(rawPath);
+  const withoutFunctionPrefix = pathname.replace(/^\/\.netlify\/functions\/api(?=\/|$)/, "");
+  const withoutApiPrefix = withoutFunctionPrefix.replace(/^\/api(?=\/|$)/, "");
+  return withoutApiPrefix || "/";
+}
+
+function getPathname(rawPath) {
+  if (typeof rawPath !== "string") {
+    return "/";
+  }
+
+  if (rawPath.startsWith("http://") || rawPath.startsWith("https://")) {
+    try {
+      return new URL(rawPath).pathname;
+    } catch {
+      return "/";
+    }
+  }
+
+  return rawPath.split("?")[0] || "/";
 }
 
 function json(statusCode, payload) {
