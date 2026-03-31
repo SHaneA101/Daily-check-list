@@ -17,12 +17,12 @@
         <p>Log in to access your daily checklist.</p>
       </div>
 
-      <form class="login-form" action="dashboard.html" autocomplete="off">
+      <form id="login-form" class="login-form" action="dashboard.html" autocomplete="off" data-auth-form="login">
         <label>
           <span class="label-text">Email</span>
           <div class="input-wrapper">
             <span class="icon">&#128231;</span>
-            <input type="email" placeholder="user@email.com" required />
+            <input type="email" name="email" placeholder="user@email.com" autocomplete="email" required />
           </div>
         </label>
 
@@ -30,7 +30,7 @@
           <span class="label-text">Password</span>
           <div class="input-wrapper">
             <span class="icon">&#128274;</span>
-            <input type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required />
+            <input type="password" name="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required />
           </div>
         </label>
 
@@ -45,6 +45,8 @@
         <p class="signup-note">
           Don&rsquo;t have an account? <a class="link-primary" href="signup.html">Sign Up</a>
         </p>
+
+        <div class="sidebar-message auth-message" id="auth-status">Log in with your work account to open the daily checklist.</div>
       </form>
     </section>
 
@@ -52,9 +54,8 @@
       <div class="image-illustration"></div>
     </section>
   </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
 </body>
-<<<<<<< HEAD
-</html>
-=======
 </html>
 

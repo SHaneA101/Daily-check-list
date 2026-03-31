@@ -7,7 +7,7 @@ function createHourlyValues(defaultValue = "") {
 const template = {
   meta: {
     department: "Washline",
-    checkDate: "2026-03-20",
+    checkDate: getTodayIsoDate(),
     shift: "Day Shift",
     supervisor: "Bakkies",
   },
@@ -65,33 +65,28 @@ async function initialize() {
 }
 
 async function loadState() {
+  if (shouldUseLocalStorageOnly()) {
+    saveStatus.textContent = "Folder mode is active. Changes save on this device.";
+    return buildState(getStorageBridge()?.getCurrentChecklist());
+  }
+
   try {
-    const response = await fetch("/api/checklist/current");
-    const stored = await response.json();
-    if (!stored) {
-      return structuredClone(template);
+    const stored = await requestJson("/api/checklist/current");
+    const storageBridge = getStorageBridge();
+    if (storageBridge) {
+      storageBridge.setCurrentChecklist(stored);
     }
 
-    return {
-      meta: { ...template.meta, ...stored.meta },
-      sections: template.sections.map((section) => {
-        const storedSection = stored.sections?.find((item) => item.title === section.title);
-        return {
-          ...section,
-          rows: section.rows.map((row) => {
-            const storedRow = storedSection?.rows?.find((item) => item.id === row.id);
-            return {
-              ...row,
-              values: { ...row.values, ...(storedRow?.values || {}) },
-              note: storedRow?.note ?? row.note,
-            };
-          }),
-        };
-      }),
-    };
-  } catch {
-    saveStatus.textContent = "Could not load shared checklist data.";
-    return structuredClone(template);
+    return buildState(stored);
+  } catch (error) {
+    const localChecklist = getStorageBridge()?.getCurrentChecklist();
+    if (localChecklist) {
+      saveStatus.textContent = "Shared server unavailable. Loaded the checklist saved on this device.";
+      return buildState(localChecklist);
+    }
+
+    saveStatus.textContent = error.message || "Could not load shared checklist data.";
+    return buildState(null);
   }
 }
 
@@ -166,15 +161,30 @@ function queueSave(message) {
 }
 
 async function persist(message) {
+  const storageBridge = getStorageBridge();
+
+  if (shouldUseLocalStorageOnly()) {
+    storageBridge?.setCurrentChecklist(state);
+    saveStatus.textContent = "Checklist saved on this device.";
+    return;
+  }
+
   try {
-    await fetch("/api/checklist/current", {
+    await requestJson("/api/checklist/current", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(state),
     });
+    storageBridge?.setCurrentChecklist(state);
     saveStatus.textContent = message;
-  } catch {
-    saveStatus.textContent = "Could not save checklist. Check the server connection.";
+  } catch (error) {
+    if (storageBridge) {
+      storageBridge.setCurrentChecklist(state);
+      saveStatus.textContent = "Shared server unavailable. Checklist saved on this device.";
+      return;
+    }
+
+    saveStatus.textContent = error.message || "Could not save checklist. Check the server connection.";
   }
 }
 
@@ -195,15 +205,35 @@ async function saveToHistory() {
     })),
   };
 
+  saveHistoryButton.disabled = true;
+  saveStatus.textContent = "Saving to history...";
+  const storageBridge = getStorageBridge();
+
+  if (shouldUseLocalStorageOnly()) {
+    storageBridge?.addHistoryEntry(snapshot);
+    saveStatus.textContent = "Daily hourly checklist saved on this device.";
+    saveHistoryButton.disabled = false;
+    return;
+  }
+
   try {
-    await fetch("/api/history", {
+    await requestJson("/api/history", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(snapshot),
     });
+    storageBridge?.addHistoryEntry(snapshot);
     saveStatus.textContent = "Daily hourly checklist saved to shared historical records.";
-  } catch {
-    saveStatus.textContent = "Could not save to history. Check the server connection.";
+  } catch (error) {
+    if (storageBridge) {
+      storageBridge.addHistoryEntry(snapshot);
+      saveStatus.textContent = "Shared server unavailable. Daily checklist saved on this device.";
+      return;
+    }
+
+    saveStatus.textContent = error.message || "Could not save to history. Check the server connection.";
+  } finally {
+    saveHistoryButton.disabled = false;
   }
 }
 
@@ -268,4 +298,66 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return escapeHtml(value).replaceAll('"', "&quot;");
+}
+
+async function requestJson(url, options) {
+  const response = await fetch(url, options);
+  return readApiResponse(response);
+}
+
+async function readApiResponse(response) {
+  const text = await response.text();
+  let payload = null;
+
+  if (text) {
+    try {
+      payload = JSON.parse(text);
+    } catch {
+      throw new Error(`Unexpected server response (${response.status}).`);
+    }
+  }
+
+  if (!response.ok) {
+    throw new Error(payload?.detail || payload?.error || `Request failed (${response.status}).`);
+  }
+
+  return payload;
+}
+
+function getTodayIsoDate() {
+  const now = new Date();
+  const timezoneAdjusted = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+  return timezoneAdjusted.toISOString().slice(0, 10);
+}
+
+function buildState(stored) {
+  if (!stored) {
+    return structuredClone(template);
+  }
+
+  return {
+    meta: { ...template.meta, ...stored.meta },
+    sections: template.sections.map((section) => {
+      const storedSection = stored.sections?.find((item) => item.title === section.title);
+      return {
+        ...section,
+        rows: section.rows.map((row) => {
+          const storedRow = storedSection?.rows?.find((item) => item.id === row.id);
+          return {
+            ...row,
+            values: { ...row.values, ...(storedRow?.values || {}) },
+            note: storedRow?.note ?? row.note,
+          };
+        }),
+      };
+    }),
+  };
+}
+
+function getStorageBridge() {
+  return window.dailyChecklistStorage || null;
+}
+
+function shouldUseLocalStorageOnly() {
+  return Boolean(getStorageBridge()?.isLocalMode?.());
 }

@@ -23,6 +23,7 @@
       <div class="dashboard-actions">
         <a class="secondary-btn" href="dashboard.html">Back to Dashboard</a>
         <a class="secondary-btn" href="historical.html">View Historical</a>
+        <button class="secondary-btn" type="button" data-auth-logout>Log Out</button>
       </div>
     </header>
 
@@ -35,11 +36,11 @@
           </label>
           <label class="meta-field">
             <span class="meta-label">Report Date</span>
-            <input type="date" name="reportDate" value="2026-03-20" required />
+            <input type="date" name="reportDate" value="" required />
           </label>
           <label class="meta-field">
-            <span class="meta-label">Report Date</span>
-            <input type="time" name="reportTime" value="08:00" required />
+            <span class="meta-label">Report Time</span>
+            <input type="time" name="reportTime" value="" required />
           </label>
           <label class="meta-field">
             <span class="meta-label">Equipment / Area</span>
@@ -80,6 +81,8 @@
     </main>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
   <script src="fault-report.js"></script>
 </body>
 </html>

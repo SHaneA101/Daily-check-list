@@ -411,6 +411,22 @@ input {
   line-height: 1.5;
 }
 
+.sidebar-message.is-error {
+  background: rgba(255, 107, 107, 0.14);
+  border-color: rgba(255, 107, 107, 0.28);
+  color: #ffd7d7;
+}
+
+.sidebar-message.is-success {
+  background: rgba(96, 211, 148, 0.14);
+  border-color: rgba(96, 211, 148, 0.28);
+  color: #c8ffe0;
+}
+
+.auth-message {
+  margin-top: 0;
+}
+
 .table-toolbar {
   display: flex;
   align-items: center;
@@ -549,6 +565,12 @@ input {
   box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.14);
 }
 
+.meta-field select:focus {
+  outline: none;
+  border-color: rgba(124, 77, 255, 0.75);
+  box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.14);
+}
+
 .line-note {
   color: #fff;
   font-weight: 600;
@@ -648,6 +670,11 @@ input {
   gap: 20px;
 }
 
+.recovery-fields {
+  display: grid;
+  gap: 18px;
+}
+
 .report-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -683,6 +710,10 @@ input {
   display: none;
 }
 
+.is-hidden {
+  display: none !important;
+}
+
 .report-list {
   display: grid;
   gap: 18px;
@@ -714,6 +745,12 @@ input {
   margin: 0;
   color: var(--muted);
   line-height: 1.7;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.75;
+  transform: none;
 }
 
 @media (max-width: 860px) {

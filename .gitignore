@@ -5,3 +5,4 @@ data/*.db-*
 node_modules/
 .netlify/
 .netlify/
+.tmp-smoke/
